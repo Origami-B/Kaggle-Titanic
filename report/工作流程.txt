@@ -1,0 +1,11 @@
+在编辑之前先用如下命令建立分支
+git branch branchname
+git switch branchname
+编辑完成之后提交
+git add .
+git commit -m 'content of the comment'
+取远程分支
+git pull
+git merge main
+git push
+即可完成
