@@ -1,4 +1,3 @@
-import featuretools as ft 
 import numpy as np 
 import pandas as pd 
 import re
@@ -252,7 +251,7 @@ x_train = titanic_train_data_X.values # Creates an array of the train data
 x_test = titanic_test_data_X.values # Creats an array of the test data
 y_train = titanic_train_data_Y.values
 
-rf = RandomForestClassifier(n_estimators=500, warm_start=True, max_features='sqrt',max_depth=6, 
+rf = RandomForestClassifier(n_estimators=500, warm_start=False, max_features='sqrt',max_depth=6, 
                             min_samples_split=3, min_samples_leaf=2, n_jobs=-1, verbose=0)
 
 ada = AdaBoostClassifier(n_estimators=500, learning_rate=0.1)
