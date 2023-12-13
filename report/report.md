@@ -1,5 +1,7 @@
 # 2023-数据科学导论实验报告
 
+[TOC]
+
 - **比赛名称**：[kaggle-Titanic](https://www.kaggle.com/competitions/titanic/overview)
 - **队伍名**：以个人形式提交，用户名tinykevin
 - **实验结果及比赛排名**：
