@@ -268,7 +268,7 @@ gb = GradientBoostingClassifier(n_estimators=500, learning_rate=0.008, min_sampl
 
 dt = DecisionTreeClassifier(max_depth=8)
 
-knn = KNeighborsClassifier(n_neighbors = 2)
+knn = KNeighborsClassifier(n_neighbors = 6)
 
 svm = SVC(kernel='linear', C=0.025)
 
@@ -343,6 +343,7 @@ def get_out_fold(clf, x_train, y_train, x_test):
     return oof_train.reshape(-1, 1), oof_test.reshape(-1, 1)
 
 # Create our OOF train and test predictions. These base results will be used as new features
+
 rf_oof_train, rf_oof_test = get_out_fold(rf, x_train, y_train, x_test) # Random Forest
 ada_oof_train, ada_oof_test = get_out_fold(ada, x_train, y_train, x_test) # AdaBoost 
 et_oof_train, et_oof_test = get_out_fold(et, x_train, y_train, x_test) # Extra Trees
@@ -350,9 +351,8 @@ gb_oof_train, gb_oof_test = get_out_fold(gb, x_train, y_train, x_test) # Gradien
 dt_oof_train, dt_oof_test = get_out_fold(dt, x_train, y_train, x_test) # Decision Tree
 knn_oof_train, knn_oof_test = get_out_fold(knn, x_train, y_train, x_test) # KNeighbors
 svm_oof_train, svm_oof_test = get_out_fold(svm, x_train, y_train, x_test) # Support Vector
-
 x_train = np.concatenate((rf_oof_train, ada_oof_train, et_oof_train, gb_oof_train, dt_oof_train, knn_oof_train, svm_oof_train), axis=1)
-x_test = np.concatenate((rf_oof_test, ada_oof_test, et_oof_test, gb_oof_test, dt_oof_train, knn_oof_test, svm_oof_test), axis=1)
+x_test = np.concatenate((rf_oof_test, ada_oof_test, et_oof_test, gb_oof_test, dt_oof_test, knn_oof_test, svm_oof_test), axis=1)
 
 gbm = XGBClassifier( n_estimators= 2000, max_depth= 4, min_child_weight= 2, gamma=0.9, subsample=0.8, 
                      colsample_bytree=0.8, objective= 'binary:logistic', nthread= -1, scale_pos_weight=1).fit(x_train, y_train)
@@ -360,44 +360,3 @@ predictions = gbm.predict(x_test)
 
 StackingSubmission = pd.DataFrame({'PassengerId': PassengerId, 'Survived': predictions})
 StackingSubmission.to_csv('./data/Stack_result.csv',index=False,sep=',')
-
-# classifiers=[]
-# classifiers.append(SVC())
-# classifiers.append(DecisionTreeClassifier())
-# classifiers.append(RandomForestClassifier())
-# classifiers.append(ExtraTreesClassifier())
-# classifiers.append(GradientBoostingClassifier())
-# classifiers.append(KNeighborsClassifier())
-# classifiers.append(LogisticRegression())
-# classifiers.append(LinearDiscriminantAnalysis())
-# classifiers.append(AdaBoostClassifier())
-
-# cv_results=[]
-# kfold=StratifiedKFold(n_splits=10)
-# for classifier in classifiers:
-#     cv_results.append(cross_val_score(classifier, x_train, y_train,
-#                                       scoring='accuracy',cv=kfold,n_jobs=-1))
-
-# cv_means=[]
-# cv_std=[]
-# for cv_result in cv_results:
-#     cv_means.append(cv_result.mean())
-#     cv_std.append(cv_result.std())
-    
-# #汇总数据
-# cvResDf=pd.DataFrame({'cv_mean':cv_means,
-#                      'cv_std':cv_std,
-#                      'algorithm':['SVC','DecisionTreeCla','RandomForestCla','ExtraTreesCla',
-#                                   'GradientBoostingCla','KNN','LR','LinearDiscrimiAna','AdaBoostClassifier']})
-
-
-
-# modelLR=LogisticRegression()
-# LR_param_grid = {'C' : [1,2,3],
-#                 'penalty':['l1','l2']}
-# modelgsLR = GridSearchCV(modelLR,param_grid = LR_param_grid, cv=kfold, 
-#                                      scoring="accuracy", n_jobs= -1, verbose = 1, n_estimators = 500)
-# modelgsLR.fit(x_train, y_train)
-# predictions = modelgsLR.predict(x_test)
-# LRSubmission = pd.DataFrame({'PassengerId': PassengerId, 'Survived': predictions})
-# LRSubmission.to_csv('./data/LR_result.csv',index=False,sep=',')
