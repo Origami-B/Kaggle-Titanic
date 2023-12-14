@@ -99,6 +99,8 @@ def get_top_n_features(titanic_train_data_X, titanic_train_data_Y, top_n_feature
     
     features_importance = pd.concat([feature_imp_sorted_rf, feature_imp_sorted_ada, feature_imp_sorted_et, 
                                    feature_imp_sorted_gb, feature_imp_sorted_dt],ignore_index=True)
+    print('Sample 10 Features from all:')
+    print(str(features_top_n[:20]))
     
     return features_top_n , features_importance
 
