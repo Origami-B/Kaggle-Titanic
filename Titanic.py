@@ -7,14 +7,18 @@ from sklearn import preprocessing
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import model_selection
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV,cross_val_score,StratifiedKFold
 from sklearn.ensemble import VotingClassifier
 from sklearn.model_selection import KFold
 from xgboost import XGBClassifier
+import seaborn as sns
 
 
 def get_top_n_features(titanic_train_data_X, titanic_train_data_Y, top_n_features):
@@ -242,10 +246,10 @@ titanic_train_data_X = train_data.drop(['Survived'],axis=1)
 titanic_train_data_Y = train_data['Survived']
 titanic_test_data_X = test_data.drop(['Survived'],axis=1)
 
-feature_to_pick = 20
-feature_top_n, feature_importance = get_top_n_features(titanic_train_data_X, titanic_train_data_Y, feature_to_pick)
-titanic_train_data_X = pd.DataFrame(titanic_train_data_X[feature_top_n])
-titanic_test_data_X = pd.DataFrame(titanic_test_data_X[feature_top_n])
+# feature_to_pick = 20
+# feature_top_n, feature_importance = get_top_n_features(titanic_train_data_X, titanic_train_data_Y, feature_to_pick)
+# titanic_train_data_X = pd.DataFrame(titanic_train_data_X[feature_top_n])
+# titanic_test_data_X = pd.DataFrame(titanic_test_data_X[feature_top_n])
 
 x_train = titanic_train_data_X.values # Creates an array of the train data
 x_test = titanic_test_data_X.values # Creats an array of the test data
@@ -266,37 +270,37 @@ knn = KNeighborsClassifier(n_neighbors = 2)
 
 svm = SVC(kernel='linear', C=0.025)
 
-# rf.fit(x_train,y_train)
+rf.fit(x_train,y_train)
 # rf_pred = rf.predict(x_test)
 # rf_sumb = pd.DataFrame({'PassengerId':PassengerId, 'Survived': rf_pred})
 # rf_sumb.to_csv('./data/rf_result.csv', index=False, sep=',')
 
-# ada.fit(x_train,y_train)
+ada.fit(x_train,y_train)
 # ada_pred = ada.predict(x_test)
 # ada_sumb = pd.DataFrame({'PassengerId':PassengerId, 'Survived': ada_pred})
 # ada_sumb.to_csv('./data/ada_result.csv', index=False, sep=',')
 
-# et.fit(x_train,y_train)
+et.fit(x_train,y_train)
 # et_pred = et.predict(x_test)
 # et_sumb = pd.DataFrame({'PassengerId':PassengerId, 'Survived': et_pred})
 # et_sumb.to_csv('./data/et_result.csv', index=False, sep=',')
 
-# gb.fit(x_train,y_train)
+gb.fit(x_train,y_train)
 # gb_pred = gb.predict(x_test)
 # gb_sumb = pd.DataFrame({'PassengerId':PassengerId, 'Survived': gb_pred})
 # gb_sumb.to_csv('./data/gb_result.csv', index=False, sep=',')
 
-# dt.fit(x_train,y_train)
+dt.fit(x_train,y_train)
 # dt_pred = dt.predict(x_test)
 # dt_sumb = pd.DataFrame({'PassengerId':PassengerId, 'Survived': dt_pred})
 # dt_sumb.to_csv('./data/dt_result.csv', index=False, sep=',')
 
-# knn.fit(x_train, y_train)
+knn.fit(x_train, y_train)
 # knn_pred = knn.predict(x_test)
 # knn_sumb = pd.DataFrame({'PassengerId':PassengerId, 'Survived': knn_pred})
 # knn_sumb.to_csv('./data/knn_result.csv', index=False, sep=',')
 
-# svm.fit(x_train,y_train)
+svm.fit(x_train,y_train)
 # svm_pred = svm.predict(x_test)
 # svm_sumb = pd.DataFrame({'PassengerId':PassengerId, 'Survived': svm_pred})
 # svm_sumb.to_csv('./data/svm_result.csv', index=False, sep=',')
@@ -345,8 +349,8 @@ dt_oof_train, dt_oof_test = get_out_fold(dt, x_train, y_train, x_test) # Decisio
 knn_oof_train, knn_oof_test = get_out_fold(knn, x_train, y_train, x_test) # KNeighbors
 svm_oof_train, svm_oof_test = get_out_fold(svm, x_train, y_train, x_test) # Support Vector
 
-x_train = np.concatenate((rf_oof_train, et_oof_train), axis=1)
-x_test = np.concatenate((rf_oof_test, et_oof_test), axis=1)
+x_train = np.concatenate((rf_oof_train, ada_oof_train, et_oof_train, gb_oof_train, dt_oof_train, knn_oof_train, svm_oof_train), axis=1)
+x_test = np.concatenate((rf_oof_test, ada_oof_test, et_oof_test, gb_oof_test, dt_oof_train, knn_oof_test, svm_oof_test), axis=1)
 
 gbm = XGBClassifier( n_estimators= 2000, max_depth= 4, min_child_weight= 2, gamma=0.9, subsample=0.8, 
                      colsample_bytree=0.8, objective= 'binary:logistic', nthread= -1, scale_pos_weight=1).fit(x_train, y_train)
@@ -354,3 +358,44 @@ predictions = gbm.predict(x_test)
 
 StackingSubmission = pd.DataFrame({'PassengerId': PassengerId, 'Survived': predictions})
 StackingSubmission.to_csv('./data/Stack_result.csv',index=False,sep=',')
+
+# classifiers=[]
+# classifiers.append(SVC())
+# classifiers.append(DecisionTreeClassifier())
+# classifiers.append(RandomForestClassifier())
+# classifiers.append(ExtraTreesClassifier())
+# classifiers.append(GradientBoostingClassifier())
+# classifiers.append(KNeighborsClassifier())
+# classifiers.append(LogisticRegression())
+# classifiers.append(LinearDiscriminantAnalysis())
+# classifiers.append(AdaBoostClassifier())
+
+# cv_results=[]
+# kfold=StratifiedKFold(n_splits=10)
+# for classifier in classifiers:
+#     cv_results.append(cross_val_score(classifier, x_train, y_train,
+#                                       scoring='accuracy',cv=kfold,n_jobs=-1))
+
+# cv_means=[]
+# cv_std=[]
+# for cv_result in cv_results:
+#     cv_means.append(cv_result.mean())
+#     cv_std.append(cv_result.std())
+    
+# #汇总数据
+# cvResDf=pd.DataFrame({'cv_mean':cv_means,
+#                      'cv_std':cv_std,
+#                      'algorithm':['SVC','DecisionTreeCla','RandomForestCla','ExtraTreesCla',
+#                                   'GradientBoostingCla','KNN','LR','LinearDiscrimiAna','AdaBoostClassifier']})
+
+
+
+# modelLR=LogisticRegression()
+# LR_param_grid = {'C' : [1,2,3],
+#                 'penalty':['l1','l2']}
+# modelgsLR = GridSearchCV(modelLR,param_grid = LR_param_grid, cv=kfold, 
+#                                      scoring="accuracy", n_jobs= -1, verbose = 1, n_estimators = 500)
+# modelgsLR.fit(x_train, y_train)
+# predictions = modelgsLR.predict(x_test)
+# LRSubmission = pd.DataFrame({'PassengerId': PassengerId, 'Survived': predictions})
+# LRSubmission.to_csv('./data/LR_result.csv',index=False,sep=',')
