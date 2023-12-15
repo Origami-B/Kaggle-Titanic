@@ -5,9 +5,9 @@
 - **比赛名称**：[kaggle-Titanic](https://www.kaggle.com/competitions/titanic/overview)
 - **队伍名**：以个人形式提交，用户名tinykevin
 - **实验结果及比赛排名**：
-
   - 正确率：79.186%
   - 排名：1454/16266
+- [github仓库](https://github.com/Origami-B/Kaggle-Titanic)
 
 ## 问题定义
 
